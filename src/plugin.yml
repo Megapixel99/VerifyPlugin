@@ -1,0 +1,33 @@
+name: VerifyPlugin
+version: 1.0
+main: org.spigotmc.verify
+api-version: 1.13
+commands:
+  verify:
+   description: Verifies a player.
+   usage: /<command> yourNetID yourCode
+  reset:
+   description: Resets a players code.
+   permission: reset
+   permission-message: You do not have permission to use this command!
+   usage: /<command> username
+  mute:
+   description: Mutes a player or the server.
+   permission: mute
+   permission-message: You do not have permission to use this command!
+   usage: /<command> player
+  unmute:
+   description: Unmutes a player or the server.
+   permission: mute
+   permission-message: You do not have permission to use this command!
+   usage: /<command> player
+  help:
+   description: help.
+   usage: /<command>
+permissions:
+  reset:
+   description: Allows reset command
+   default: false
+  mute:
+   description: Allows mute command
+   default: false

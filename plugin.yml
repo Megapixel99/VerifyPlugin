@@ -1,0 +1,4 @@
+name: BlankPlugin
+version: 1.0
+main: org.spigotmc.BlankPlugin
+api-version: 1.13
