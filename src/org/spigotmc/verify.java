@@ -33,6 +33,7 @@ public class verify extends JavaPlugin implements Listener {
     Boolean serverMute = false;
     String hostname = ""; //change this
     String helpVerbiage = ""; //change this
+    String token = ""; //change this
     double SpawnRadius = 10.0;
     Location spawnLoc = null;
 
@@ -192,6 +193,7 @@ public class verify extends JavaPlugin implements Listener {
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestProperty("Authorization", token);
 
         con.setRequestMethod("PUT");
 
@@ -216,15 +218,25 @@ public class verify extends JavaPlugin implements Listener {
     return sb.toString();
   }
 
-  public static JsonObject readJsonFromUrl(String url) throws IOException {
-    InputStream is = new URL(url).openStream();
-    try {
-      BufferedReader rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-      String jsonText = readAll(rd);
-      JsonObject json = new JsonParser().parse(jsonText).getAsJsonObject();
-      return json;
-    } finally {
-      is.close();
-    }
+  public JsonObject readJsonFromUrl(String _url) throws IOException {
+
+        String url = _url;
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestProperty("Authorization", token);
+
+        con.setRequestMethod("GET");
+
+         InputStream response = con.getInputStream();
+
+         try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(response, "UTF-8"));
+            String jsonText = readAll(rd);
+            JsonObject json = new JsonParser().parse(jsonText).getAsJsonObject();
+            return json;
+          } finally {
+            response.close();
+          }
   }
 }
