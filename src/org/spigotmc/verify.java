@@ -43,23 +43,6 @@ public class verify extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPVP(EntityDamageEvent e) {
-        Location EntLoc = e.getEntity().getLocation();
-        if (notNearSpawn(EntLoc)) {
-            e.setCancelled(true);
-            e.getEntity().sendMessage("You are not allowed to PvP near spawn");
-        }
-    }
-
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
-        if (!notNearSpawn(e.getPlayer().getLocation())){
-           e.setCancelled(true);
-           e.getPlayer().sendMessage("You are not allowed to build near spawn");
-        }
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         e.setJoinMessage("Welcome " + e.getPlayer().getName() + ", to the server");
         Bukkit.getLogger().log(Level.INFO, "{0} logged onto the server", e.getPlayer().getName());
