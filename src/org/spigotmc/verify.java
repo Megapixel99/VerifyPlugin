@@ -166,11 +166,11 @@ public class verify extends JavaPlugin implements Listener {
                     muteExempt.add(player.getName());
                 }
                 player.setDisplayName("§1" + player.getName());
-            } else if (res.get("role").toString().equalsIgnoreCase("\"owner\"")) {
+            } else if (res.get("role").toString().equalsIgnoreCase("\"super-mod\"")) {
                 player.setOp(true);
                 attachment.setPermission("reset",true);
                 attachment.setPermission("mute",true);
-                player.setPlayerListName(" §f[§cOVERLORD§f] §c" + player.getName());
+                player.setPlayerListName(" §f[§cSUPER-MOD§f] §c" + player.getName());
                 if (!muteExempt.contains(player.getName())){
                     muteExempt.add(player.getName());
                 }
