@@ -21,11 +21,12 @@ mute: Allows mute and unmute command
 ## System (environment) properties
 
 To ensure the plugin builds successfully you will need to change the following in `verify.java`:
-* configure the server host to your host and port
+* configure the server host to your host host (and port, if applicable)
 * set the help verbiage to whatever you call your players
 (i.e. if your player base is university students the help verbiage should be
   set to "you are a university student")
 * configure the name of your world file
+* set the Bearer Token which will be used (if you choose to use one)
 
 ## How to build this plugin
 
