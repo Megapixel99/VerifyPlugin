@@ -34,7 +34,7 @@ public class verify extends JavaPlugin implements Listener {
     String hostname = ""; //change this
     String helpVerbiage = ""; //change this
     double SpawnRadius = 10.0;
-    Location spawnLoc = Bukkit.getWorld("").getSpawnLocation(); //change this
+    Location spawnLoc = null;
 
     @Override
     public void onEnable(){
@@ -81,7 +81,7 @@ public class verify extends JavaPlugin implements Listener {
         if (muteExempt.contains(player.getName()) || (!serverMute && !muted.contains(player.getName()))){
            String msg = player.getPlayerListName() + "§f: " + event.getMessage();
            player.sendMessage(msg);
-           Bukkit.getLogger().log(Level.INFO, "{0}: {1}", new Object[]{player.getName(), msg});
+           Bukkit.getLogger().log(Level.INFO, "{0} ({1}): {2}", new Object[]{player.getName(), player.getUniqueId(), event.getMessage()});
         }
     }
 
@@ -135,14 +135,15 @@ public class verify extends JavaPlugin implements Listener {
    }
 
    public boolean notNearSpawn(Location loc) {
+       if (spawnLoc == null) {
+        spawnLoc = Bukkit.getWorld(Bukkit.getWorlds().get(0).getName()).getSpawnLocation();
+       }
        return (loc.getWorld().equals(spawnLoc.getWorld()) && loc.distanceSquared​(spawnLoc) <= SpawnRadius);
    }
 
    private void isVerified(Player player, JsonObject res) throws Exception {
         PermissionAttachment attachment = player.addAttachment(this);
         if (res.get("verified").toString().equals("true")) {
-            if (!notNearSpawn(player.getLocation())) {
-            }
             if (res.get("role").toString().equalsIgnoreCase("\"mod\"")){
                 player.setOp(false);
                 attachment.setPermission("reset",true);
@@ -176,8 +177,8 @@ public class verify extends JavaPlugin implements Listener {
             } else {
                 player.setOp(false);
                 player.setPlayerListName(" " + player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
             }
-            player.setGameMode(GameMode.SURVIVAL);
             ((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a((((CraftPlayer) player).getHandle()));
         } else {
             player.sendMessage("You are currently unverified on this server and will remain in spectator mode until you verify " + helpVerbiage);
