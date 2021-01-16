@@ -134,8 +134,6 @@ public class verify extends JavaPlugin implements Listener {
                 attachment.setPermission("mute",true);
                 attachment.setPermission("minecraft.command.kick",true);
                 attachment.setPermission("minecraft.command.ban",true);
-                attachment.setPermission("minecraft.command.gamemode",true);
-                attachment.setPermission("minecraft.command.teleport",true);
                 player.setPlayerListName(" §f[§bMOD§f] §b" + player.getName());
                 if (!muteExempt.contains(player.getName())){
                     muteExempt.add(player.getName());
