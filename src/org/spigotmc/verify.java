@@ -31,6 +31,7 @@ public class verify extends JavaPlugin implements Listener {
     ArrayList<String> muted = new ArrayList<>();
     ArrayList<String> muteExempt = new ArrayList<>();
     Boolean serverMute = false;
+    Boolean kickUnverified = true; //change this
     String hostname = ""; //change this
     String helpVerbiage = ""; //change this
     String token = ""; //change this
@@ -47,14 +48,13 @@ public class verify extends JavaPlugin implements Listener {
         e.setJoinMessage("Welcome " + e.getPlayer().getName() + ", to the server");
         Bukkit.getLogger().log(Level.INFO, "{0} logged onto the server", e.getPlayer().getName());
         e.getPlayer().setGameMode(GameMode.SPECTATOR);
-        e.getPlayer().setPlayerListName(" §f[GHOST] " + e.getPlayer().getName());
-        e.getPlayer().setFlySpeed(0.1f);
-        e.getPlayer().setWalkSpeed(0.1f);
+        e.getPlayer().setPlayerListName("§f[GHOST] " + e.getPlayer().getName());
+        e.getPlayer().setFlySpeed(0.2f);
+        e.getPlayer().setWalkSpeed(0.2f);
         try {
             isVerified(e.getPlayer(), readJsonFromUrl("http://localhost:3000/verify/status/uuid/" + e.getPlayer().getUniqueId() + "?ign=" + e.getPlayer().getName()));
         } catch (Exception ex) {
-            // server is down
-            Bukkit.getLogger().warning(ex.getLocalizedMessage());
+            e.getPlayer().kickPlayer("You are not verified");
         }
     }
 
@@ -130,19 +130,20 @@ public class verify extends JavaPlugin implements Listener {
         if (res.get("verified").toString().equals("true")) {
             if (res.get("role").toString().equalsIgnoreCase("\"mod\"")){
                 player.setOp(false);
-                attachment.setPermission("reset",true);
                 attachment.setPermission("mute",true);
                 attachment.setPermission("minecraft.command.kick",true);
                 attachment.setPermission("minecraft.command.ban",true);
-                player.setPlayerListName(" §f[§bMOD§f] §b" + player.getName());
+                player.setPlayerListName("§f[§bMOD§f] §b" + player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
                 if (!muteExempt.contains(player.getName())){
                     muteExempt.add(player.getName());
                 }
                 player.setDisplayName("§b" + player.getName());
             } else if (res.get("role").toString().equalsIgnoreCase("\"staff\"")) {
                 player.setOp(false);
-                player.setPlayerListName(" §f[STAFF§f] §1" + player.getName());
+                player.setPlayerListName("§f[STAFF§f] §1" + player.getName());
                 attachment.setPermission("mute",true);
+                player.setGameMode(GameMode.SURVIVAL);
                 if (!muteExempt.contains(player.getName())){
                     muteExempt.add(player.getName());
                 }
@@ -151,11 +152,12 @@ public class verify extends JavaPlugin implements Listener {
                 player.setOp(true);
                 attachment.setPermission("reset",true);
                 attachment.setPermission("mute",true);
-                player.setPlayerListName(" §f[§cSUPER-MOD§f] §c" + player.getName());
+                player.setPlayerListName("§f[§cSUPER-MOD§f] §c" + player.getName());
                 if (!muteExempt.contains(player.getName())){
                     muteExempt.add(player.getName());
                 }
                 player.setDisplayName("§c" + player.getName());
+                player.sendMessage("You are currently in gamemode: " + player.getGameMode());
             } else {
                 player.setOp(false);
                 player.setPlayerListName(" " + player.getName());
@@ -163,8 +165,12 @@ public class verify extends JavaPlugin implements Listener {
             }
             ((CraftServer) Bukkit.getServer()).getHandle().getServer().getCommandDispatcher().a((((CraftPlayer) player).getHandle()));
         } else {
-            player.sendMessage("You are currently unverified on this server and will remain in spectator mode until you verify " + helpVerbiage);
-            player.sendMessage("for help with verifying please use /help");
+            if (kickUnverified == true) {
+                player.kickPlayer("You are not verified");
+            } else {
+                player.sendMessage("You are currently unverified on this server and will remain in spectator mode until you verify " + helpVerbiage);
+                player.sendMessage("for help with verifying please use /help");
+            }
         }
    }
 
@@ -211,13 +217,13 @@ public class verify extends JavaPlugin implements Listener {
 
          InputStream response = con.getInputStream();
 
-         try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response, "UTF-8"));
-            String jsonText = readAll(rd);
-            JsonObject json = new JsonParser().parse(jsonText).getAsJsonObject();
-            return json;
-          } finally {
-            response.close();
-          }
-  }
+            try {
+               BufferedReader rd = new BufferedReader(new InputStreamReader(response, "UTF-8"));
+               String jsonText = readAll(rd);
+               JsonObject json = new JsonParser().parse(jsonText).getAsJsonObject();
+               return json;
+             } finally {
+               response.close();
+             }
+    }
 }
